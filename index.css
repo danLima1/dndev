@@ -188,6 +188,7 @@ body {
     border-radius: .35rem;
     border: 1px dotted grey;
     flex-grow: 1;
+    padding: 0 1rem;
 }
 
 #wrap>main>aside {
@@ -195,6 +196,9 @@ body {
     margin-top: .5rem;
     border-radius: .35rem;
     border: 1px dotted grey;
+    flex-grow: 1;
+    padding: 0 1rem;
+    
 }
 
 /* Rodapé */
