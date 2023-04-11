@@ -2,7 +2,6 @@
  * FrontEndeiros 1.0
  * MIT License 2023 By Luferat
  **/
-
 /**
  * 
  * JavaScript do aplicativo.
@@ -20,13 +19,12 @@
  *  • https://www.w3schools.com/jsref/
  *  • https://www.w3schools.com/jquery/
  **/
-
 /**
  * Algumas configurações do aplicativo.
  * Dica: você pode acrescentar novas configurações aqui se precisar.
  **/
  var app = {
-    siteName: 'Futikeiros',
+    siteName: 'FrontEndeiros',
     siteSlogan: 'Programando para o futuro'
 }
 
@@ -63,7 +61,19 @@ function myApp() {
      * Posteriormente, esta chamada à "loadpage()" será otimizada para melhorar
      * o paradigma "SEO Friendly" do aplicativo.
      **/
-    loadpage('home')
+    // loadpage('home')
+
+    const path = localStorage.path
+    if (path) {                         // Se cliente está acessando uma página específica...
+      delete  localStorage.path;             // Limpa o 'localStorage'.
+        loadpage(path);                // Acessa a página solicitada.
+    } else {                           // Se não solicitou uma página específica...
+        loadpage('home');              // Carrega a página inicial.
+    }
+
+
+
+
 
     /**
      * jQuery → Monitora cliques em elementos '<a>' que , se ocorre, chama a função 
@@ -260,3 +270,4 @@ function changeTitle(title = '') {
     $('title').html(pageTitle)
 
 }
+

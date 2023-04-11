@@ -1,2 +1,2 @@
 # frontend
- começando com frontEnd
+aplicativo frontEnd usando html, css e javaScript
