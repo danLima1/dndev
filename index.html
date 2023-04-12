@@ -2,27 +2,35 @@
 <html lang="pt-br">
 
 <head>
+    <!--
+        Caminho base.
+        Define o caminho absoluto dos documentos e links do site.
+        Este camiho será alterado conforme a plataforma de hospedagem.
+    -->
+    <base href="/">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Site para apresentação dos conceitos de front-end.">
-    <meta name="author" descrition="Daniel Lima &lt;danieldelimamendes500@gmail.com&gt;">
+    <meta name="description" content="Site para apresentação dos conceitos de front-end do curso de Java.">
+    <meta name="author" descrition="Dan Lima &lt;danieldelimamendes500@gmail.com&gt;">
     <meta name="keywords" description="JavaScript, HTML5, CSS3, semântica, mobile-first, responsividade, api, rest">
-    <link rel="stylesheet" href="/index.css">
-    <!-- carrega o css especifico de cada pagina -->
+    <link rel="stylesheet" href="index.css">
+    
+    <!-- Carrega o CSS específico de cada página -->
     <link rel="stylesheet" href="" id="pageCSS">
-
-    <link rel="shortcut icon" href="/img/logo.png">
+    
+    <link rel="shortcut icon" href="img/favicon.alfa.png">
     <title>FrontEndeiros</title>
 </head>
 
 <body>
+
     <!-- WRAP -->
     <div id="wrap">
 
         <!-- Âncora para o topo da página → #top -->
         <a id="top"></a>
 
-        <!-- Cabeçalho -->
+        <!-- Cabeçalho usando Font Awesome como ícone -->
         <header>
             <a href="home"><i class="fa-solid fa-laptop-code fa-fw"></i></a>
             <h1>FrontEndeiros<small>Programando para o futuro</small></h1>
@@ -80,7 +88,7 @@
                     <h4>Redes Sociais:</h4>
                     <ul>
                         <li>
-                            <a href="https://facebook.com/FrontEnd" target="_blank">
+                            <a href="HTTPS://facebook.com/FrontEnd" target="_blank">
                                 <i class="fa-brands fa-square-facebook fa-fw"></i>
                                 <span>FaceBook</span>
                             </a>
@@ -135,7 +143,7 @@
 
     <!-- Carga do JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-    <script src="/index.js"></script>
+    <script src="index.js"></script>
 
 </body>
 

@@ -2,6 +2,7 @@
  * FrontEndeiros 1.0
  * MIT License 2023 By Luferat
  **/
+
 /**
  * 
  * JavaScript do aplicativo.
@@ -19,6 +20,7 @@
  *  • https://www.w3schools.com/jsref/
  *  • https://www.w3schools.com/jquery/
  **/
+
 /**
  * Algumas configurações do aplicativo.
  * Dica: você pode acrescentar novas configurações aqui se precisar.
@@ -54,26 +56,19 @@ $(document).ready(myApp)
 function myApp() {
 
     /**
-     * Faz a carga da página inicial do SPA. A página a ser carregada na 
-     * inicialização é definida pela string parâmetro e corresponde a uma
-     * das subpastas de "/pages".
-     * 
-     * Posteriormente, esta chamada à "loadpage()" será otimizada para melhorar
-     * o paradigma "SEO Friendly" do aplicativo.
+     * IMPORTANTE!
+     * Para que o roteamento funcione corretamente no "live server", é 
+     * necessário que erros 404 abram a página "index.html".
      **/
-    // loadpage('home')
 
-    const path = localStorage.path
-    if (path) {                         // Se cliente está acessando uma página específica...
-      delete  localStorage.path;             // Limpa o 'localStorage'.
-        loadpage(path);                // Acessa a página solicitada.
-    } else {                           // Se não solicitou uma página específica...
-        loadpage('home');              // Carrega a página inicial.
-    }
+    // Extrai a rota da página da URL e armazena em 'path'.
+    var path = window.location.pathname.split('/')[1]
 
+    // Se 'path' é vazia, 'path' é a página inicial.
+    if (path == '') path = 'home'
 
-
-
+    // Carrega a página solicitada pela rota em 'path'.
+    loadpage(path)
 
     /**
      * jQuery → Monitora cliques em elementos '<a>' que , se ocorre, chama a função 
@@ -88,10 +83,32 @@ function myApp() {
  **/
 function routerLink() {
 
-    // Obtém o valor do atributo 'href' do elemento clicado.
+    /**
+     * Extrai o valor do atributo "href" do elemento clicado e armazena na 
+     * variável "href".
+     * 
+     * OBS: $(this) faz referência especificamente ao elemento que foi clicado.
+     * 
+     * Referências:
+     *  • https://api.jquery.com/attr/
+     *  • https://www.w3schools.com/jquery/jquery_syntax.asp
+     **/
     var href = $(this).attr('href').trim().toLowerCase()
 
-    // Detecta clique em links externos e âncoras (#).
+    /**
+     * Se clicou em um link externo (http://... OU https://...) ou em uma 
+     * âncora (#...),devolve o controle da página para o navegador (return true) 
+     * que fará o processamento normal.
+     * 
+     * OBS: Os carateres '||' (pipe pipe) significam a lógica 'OR' (OU) onde, se 
+     * apenas uma das expressões for verdadeira, todas as expressões serão 
+     * verdadeiras. Consulte as referências.
+     * 
+     * Referências:
+     *  • https://www.w3schools.com/js/js_if_else.asp
+     *  • https://www.w3schools.com/jsref/jsref_substr.asp
+     *  • https://www.w3schools.com/js/js_comparisons.asp
+     **/
     if (
         href.substring(0, 7) == 'http://' ||
         href.substring(0, 8) == 'https://' ||
@@ -100,10 +117,15 @@ function routerLink() {
         // Devolve o controle para o HTML.
         return true
 
-    // Exibe a página da rota clicada.
+    /**
+     * Carrega a rota solicitada.
+     **/
     loadpage(href)
 
-    // Bloqueia o funcionamento normal do link.
+    /**
+     * Encerra o processamento do link sem fazer mais nada. 'return false' 
+     * bloqueia a ação normal do navegador sobre um link.
+     **/
     return false
 }
 
@@ -128,7 +150,7 @@ function routerLink() {
  *  5. Já para carregar esta página no SPA pelo JavaScript, comandamos 
  *     "loadpage('mypage')", por exemplo.
  **/
-function loadpage(page) {
+function loadpage(page, updateURL = true) {
 
     /*
      * Monta os caminhos (path) para os componentes da página solicitada, 
@@ -178,43 +200,25 @@ function loadpage(page) {
          **/
         .done((data) => {
 
-            /**
-             * jQuery → Carrega o CSS da página solicitada na "index.html"
-             * principal.
-             **/
-            $('#pageCSS').attr('href', path.css)
+            // Se o documento carregado NÃO é uma página de conteúdo...
+            if (data.trim().substring(0, 9) != '<article>')
 
-            /**
-             * jQuery → Obtém os dados da requisição, no caso, o conteúdo do 
-             * componente HTML da página e o exibe no elemento SPA → <main>.
-             **/
-            $('main').html(data)
+                // Carrega a página de erro 404 sem atualizar a rota.
+                loadpage('e404', false)
 
-            /**
-             * jQuery → Obtém o código JavaScript da página, carrega na memória
-             * e "executa".
-             **/
-            $.getScript(path.js)
+            // Se o documento é uma página de conteúdo...
+            else {
 
-        })
+                // jQuery - Instala o CSS da página na 'index.html'.
+                $('#pageCSS').attr('href', path.css)
 
-        /**
-         * Caso o "request" falhe, por conta de o documento solicitado não 
-         * existir, carrega a página de erro "e404" ('/pages/e404') no SPA.
-         **/
-        .fail((error) => {
+                // jQuery - Carrega o HTML no elemento <main></main>.
+                $('main').html(data)
 
-            /**
-             * Carrega a página de erro 404 no SPA.
-             */
-            loadpage('e404')
+                // jQuery - Carrega e executa o JavaScript.
+                $.getScript(path.js)
+            }
 
-            /**
-             * Exibe a mensagem de erro que ocorreu no console, para depuração.
-             * Opcionalmente, esta linha poderá/deverá ser removida no momento
-             * do deploy (publicação) da versão final.
-             */
-            console.error(error)
         })
 
     /**
@@ -229,7 +233,8 @@ function loadpage(page) {
      * Referências:
      *  • https://developer.mozilla.org/en-US/docs/Web/API/History/pushState
      **/
-    window.history.pushState({}, '', page);
+    if(updateURL)
+        window.history.pushState({}, '', page);
 
 }
 
@@ -270,4 +275,3 @@ function changeTitle(title = '') {
     $('title').html(pageTitle)
 
 }
-
