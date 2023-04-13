@@ -1,9 +1,16 @@
 $(document).ready(myContacts)
-// função principal da página home
+
+/**
+ * Função principal da página "contacts".
+ **/
 function myContacts() {
-// altera o titulo da página quando home for acessado
-changeTitle('faça contato')
-$(document).on('submit', '#cForm', sendContact)
+    /**
+     * Altera o título da página quando 'contacts' for acessada.
+     **/
+    changeTitle('Faça contato')
+
+    $(document).on('submit', '#cForm', sendContact)
+
 }
 
 function sendContact(ev) {
@@ -12,14 +19,22 @@ function sendContact(ev) {
 
     const formData = new FormData(ev.target);
 
-    for (const [key, value] of formData) {
+    formData.forEach((value, key) => {
         formJSON[key] = value
-    }
- 
-    formJSON = JSON.stringify(formJSON)
+    })
 
-    console.log(formJSON)
-    
-    // console.log(JSON.parse(formJSON))
+    $.post('http://localhost:3000/contacts', formJSON)
+    .done((data) => {
+        if(data.status == 'success') {
+            var firstName = formJSON.name.split(' ')[0]
+            var feedback = `
+                <h3>Olá ${firstName}!</h3>
+                <p>Seu contato foi enviado com sucesso.</p>
+                <p>Obrigado...</p>
+            `
+            $('#cForm').html(feedback)
+        }
+    })
 
-    return false}
+    return false
+}
