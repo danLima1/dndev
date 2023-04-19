@@ -1,5 +1,8 @@
 $(document).ready(myView)
 
+// Inicializa a variável de saída.
+var article = author = authorArts = ''
+
 // Função principal da página "user".
 function myView() {
 
@@ -8,9 +11,6 @@ function myView() {
 
     // Apaga id do artigo da sessão.
     // delete sessionStorage.article
-
-    // Inicializa a variável de saída.
-    var article = author = ''
 
     // Obtém o artigo da API, pelo ID.
     $.get(app.apiArticleURL + artId)
@@ -33,7 +33,7 @@ function myView() {
             // Obter dados do autor.
             $.get(app.apiUserURL + art.author)
                 .done((user) => {
-                    
+                    // console.log(user)
 
                     author = `
 <div class="art-author">
@@ -44,8 +44,19 @@ function myView() {
 </div>
                 `
 
-                    $('aside').html(author)
-
+                    // Obtém todos os artigos deste autor.
+                    $.get(app.apiArticleURL + `?author=${user.id}`)
+                        .done((uArt) => {
+                            authorArts += `<ul>`
+                            uArt.forEach((data) => {
+                                if (data.id != art.id) {
+                                    authorArts += `<li><a href="view" data-id="${data.id}">${data.title}</a></li>`
+                                }
+                            });
+                            authorArts += `</ul>`
+                            $('aside').html(author + authorArts)
+                        })
+                        .fail()
                 })
                 .fail()
 
