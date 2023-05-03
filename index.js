@@ -30,9 +30,10 @@ var app = {
     siteName: 'FrontEndeiros',
     siteSlogan: 'Programando para o futuro',
     apiContactsURL: apiBaseURL + 'contacts',
-    apiArticlesURL: apiBaseURL + 'articles?_sort=date&_order=desc',
+    apiArticlesURL: apiBaseURL + 'articles?_sort=date&_order=desc&status=on',
     apiArticleURL: apiBaseURL + 'articles/',
-    apiUserURL: apiBaseURL + 'users/'
+    apiUserURL: apiBaseURL + 'users/',
+    apiCommentURL: apiBaseURL + 'comments?_sort=date&_order=desc&status=on'
 }
 
 /**
@@ -112,10 +113,9 @@ function myApp() {
 // Faz login do usuário usando o Firebase Authentication
 function fbLogin() {
     firebase.auth().signInWithPopup(provider)
-    .then(()=>{
-        loadpage('home')
-    }
-    )
+        .then(() => {
+            loadpage('home')
+        })
 }
 
 /**

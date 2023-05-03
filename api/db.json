@@ -55,6 +55,10 @@
       "type": "user",
       "status": "on",
       "id": 3
+    },
+    {
+      "nome": "Jocasta",
+      "email": "joca@casta.com"
     }
   ],
   "articles": [
@@ -99,13 +103,16 @@
       "resume": "conheça o produto mais produzido na produção produtiva",
       "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean faucibus justo nibh, sed rutrum neque feugiat ac.",
       "views": 0,
-      "status": "on",
+      "status": "off",
       "id": 4
     }
   ],
   "comments": [
     {
-      "author": "2",
+      "name": "Daniel", 
+      "photo": "https://lh3.googleusercontent.com/a/AGNmyxauF2xzLNkC0p2oT_D_kyXuCCEJhPP_re3aAdnw=s96-c", 
+      "email": "danieldelimamendes409@gmail.com",
+      "uid": "rF0O7FPgRwgmldyRLFLryDcxzpU2",
       "date": "2023-04-17 20:47:00",
       "article": 1,
       "content": "Comentando comentários comentáveis",
@@ -117,6 +124,7 @@
       "date": "2023-04-17 20:49:00",
       "article": 1,
       "content": "Não é possível que este comentário esteja comentando.",
+      "photo": "https://randomuser.me/api/portraits/men/3.jpg",
       "status": "on",
       "id": 2
     }
