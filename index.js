@@ -25,15 +25,10 @@
  * Algumas configurações do aplicativo.
  * Dica: você pode acrescentar novas configurações aqui se precisar.
  **/
-var apiBaseURL = 'http://localhost:3000/'
-var app = {
+const app = {
     siteName: 'FrontEndeiros',
     siteSlogan: 'Programando para o futuro',
-    apiContactsURL: apiBaseURL + 'contacts',
-    apiArticlesURL: apiBaseURL + 'articles?_sort=date&_order=desc&status=on',
-    apiArticleURL: apiBaseURL + 'articles/',
-    apiUserURL: apiBaseURL + 'users/',
-    apiCommentURL: apiBaseURL + 'comments?_sort=date&_order=desc&status=on'
+    apiBaseURL: 'http://localhost:3000/'
 }
 
 /**
@@ -60,6 +55,8 @@ $(document).ready(myApp)
  *  • https://www.w3schools.com/js/js_functions.asp
  **/
 function myApp() {
+
+    onstorage = popUpOpen
 
     // Monitora status de autenticação do usuário
     firebase.auth().onAuthStateChanged((user) => {
@@ -94,7 +91,7 @@ function myApp() {
     }
 
     // Armazena a rota obtida em 'path'.        
-    var path = sessionStorage.path
+    path = sessionStorage.path
 
     // Apaga o 'localStorage', liberando o recurso.
     delete sessionStorage.path
@@ -103,18 +100,31 @@ function myApp() {
     loadpage(path)
 
     /**
-     * jQuery → Monitora cliques em elementos '<a>' que , se ocorre, chama a função 
+     * jQuery → Monitora cliques em elementos '<a>' que, se ocorre, chama a função 
      * routerLink().
      **/
     $(document).on('click', 'a', routerLink)
+
+    /**
+     * Quando clicar em um artigo.
+     **/
+    $(document).on('click', '.art-item', loadArticle)
 
 }
 
 // Faz login do usuário usando o Firebase Authentication
 function fbLogin() {
     firebase.auth().signInWithPopup(provider)
-        .then(() => {
-            loadpage('home')
+        .then((user) => {
+            popUp({ type: 'success', text: `Olá ${user.user.displayName}!` })
+            loadpage(location.pathname.split('/')[1])
+        })
+        .catch((error) => {
+            try {
+                popUp({ type: 'error', text: 'Ooops! Popups estão bloqueados!<br>Por favor, libere-os!' })
+            } catch (e) {
+                alert('Ooops! Popups estão bloqueados!\nPor favor, libere-os!')
+            }
         })
 }
 
@@ -308,28 +318,10 @@ function loadpage(page, updateURL = true) {
  * 
  **/
 function changeTitle(title = '') {
-
-    /**
-     * Define o título padrão da página.
-     */
     let pageTitle = app.siteName + ' - '
-
-    /**
-     * Se não foi definido um título para a página, 
-     * usa o slogan.
-     **/
     if (title == '') pageTitle += app.siteSlogan
-
-    /**
-     * Se foi definido um título, usa-o.
-     */
     else pageTitle += title
-
-    /**
-     * Escreve o novo título na tag <title></title>.
-     */
     $('title').html(pageTitle)
-
 }
 
 /**
@@ -342,7 +334,7 @@ function getAge(sysDate) {
     const tMonth = today.getMonth() + 1
     const tDay = today.getDate()
 
-    // Obtebdo partes da data original.
+    // Obtendo partes da data original.
     const parts = sysDate.split('-')
     const pYear = parts[0]
     const pMonth = parts[1]
@@ -352,9 +344,87 @@ function getAge(sysDate) {
     var age = tYear - pYear
 
     // Verificar o mês e o dia.
-    if (pMonth > tMonth) age--
-    else if (pMonth == tMonth && pDay > tDay) age--
+    if (pMonth > tMonth || pMonth == tMonth && pDay > tDay) age--
 
     // Retorna a idade.
     return age
+}
+
+/**
+ * Carrega o artigo completo.
+ **/
+function loadArticle() {
+    sessionStorage.article = $(this).attr('data-id')
+    loadpage('view')
+}
+
+/**
+ * Sanitiza um texto, removendo todas as tags HTML.
+ **/
+function stripHtml(html) {
+    let doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || "";
+}
+
+function popUp(params) {
+    const x = window.open('', 'popupWindow', 'width=1,height=1,left=10000');
+    x.localStorage.setItem('popUp', JSON.stringify(params));
+    x.close()
+}
+
+function popUpOpen() {
+
+    if (localStorage.popUp) {
+
+        const pData = JSON.parse(localStorage.popUp)
+        var pStyle = ''
+
+        switch (pData.type) {
+            case 'error': pStyle = 'background-color: #f00; color: #fff'; break
+            case 'alert': pStyle = 'background-color: #ff0; color: #000'; break
+            case 'success': pStyle = 'background-color: #0f0; color: #000'; break
+            default: pStyle = 'background-color: #fff; color: #000'
+        }
+
+        $('body').prepend(`
+        <div id="popup">
+            <div class="popup-body" style="${pStyle}">
+                <div class="popup-text">${pData.text}</div>
+                <div class="popup-close"><i class="fa-solid fa-xmark fa-fw"></i></div>
+            </div>
+        </div>
+        `)
+
+        $('.popup-close').click(popUpClose)
+        setTimeout(popUpClose, parseInt(pData.time) || 3000)
+
+    }
+}
+
+function popUpClose() {
+    delete localStorage.popUp
+    $('#popup').remove()
+}
+
+const myDate = {
+
+    sysToBr: (systemDate, time = true) => {
+        var parts = systemDate.split(' ')[0].split('-')
+        var out = `${parts[2]}/${parts[1]}/${parts[0]}`
+        if (time) out += ` às ${systemDate.split(' ')[1]}`
+        return out
+    },
+
+    jsToBr: (jsDate, time = true) => {
+        var theDate = new Date(jsDate)
+        var out = theDate.toLocaleDateString('pt-BR')
+        if (time) out += ` às ${theDate.toLocaleTimeString('pt-BR')}`
+        return out
+    },
+
+    todayToSys: () => {
+        const today = new Date()
+        return today.toISOString().replace('T', ' ').split('.')[0]
+    }
+
 }
