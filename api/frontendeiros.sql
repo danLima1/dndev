@@ -1,6 +1,6 @@
 -- ---------------------------------
 -- FrontEndeiros - Banco de dados
--- By Luferat
+-- By DanLima
 -- MIT License
 -- 
 -- Modela o banco de dados da API do aplicativo.
@@ -25,7 +25,7 @@ CREATE TABLE contacts (
     email VARCHAR(255) NOT NULL,
     subject VARCHAR(255) NOT NULL,
     message TEXT NOT NULL,
-    status ENUM ('received', 'readed', 'responded', 'deleted') DEFAULT 'received'
+    status ENUM ('received', 'readed', 'responded', 'trashed', 'deleted') DEFAULT 'received'
 );
 
 -- Cria a tabela de usuários → users.
@@ -34,6 +34,7 @@ CREATE TABLE users (
     user_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     user_name VARCHAR(255) NOT NULL,
     user_email VARCHAR(255) NOT NULL,
+    user_password VARCHAR(63) NOT NULL,
     user_photo VARCHAR(255) COMMENT 'URL da imagem.',
     user_bio VARCHAR(255),
     user_birth DATE,
@@ -86,40 +87,50 @@ INSERT INTO contacts
     ( name, email, subject, message )
 VALUES 
     ('Joca da Silva', 'joca@silva.com', 'Erro', 'Não consigo me cadastrar.'),
-    ('Setembrino', 'set@brino.com.br', 'biscoito', 'Biscoit não é bolacha.'),
+    ('Setembrino', 'set@brino.com.br', 'biscoito', 'Biscoito não é bolacha.'),
     ('Maricleuza', 'mari@cleuza.net', 'bolacha', 'Bolacha é biscoito são a mesma coisa.');
 
 -- Insere dados na tabela 'users'.
 INSERT INTO users (
     user_name,
     user_email,
+    user_password,
     user_photo,
     user_bio,
-    user_birth
+    user_birth,
+    user_type
 ) VALUES (
     'Joca da Silva',
     'joca@silva.com',
+    SHA1('Senha_123'),
     'https://randomuser.me/api/portraits/men/33.jpg',
     'Construtor, programador e enrolador',
-    '2000-10-28'
+    '2000-10-28',
+    'author'
 );
 
 -- Insere dados na tabela 'users'.
 -- Somente campos "not null".
 INSERT INTO users (
     user_name,
-    user_email
+    user_email,
+    user_password
 ) VALUES (
     'Setembrino',
-    'set@brino.com.br'
+    'set@brino.com.br',
+    SHA1('Senha_123')
 );
 
 -- Insere dados na tabela 'users'.
 -- Somente o 'name'.
 INSERT INTO users (
-    user_name
+    user_name,
+    user_email,
+    user_password
 ) VALUES (
-    'Hermenilda'
+    'Hermenilda',
+    'herme@nilda.com',
+    SHA1('Senha_123')
 );
 
 -- Insere artigos na tabela 'articles'.
@@ -145,12 +156,16 @@ INSERT INTO articles (
     art_resume,
     art_content
 ) VALUES (
-    '6',
+    '1',
     'Segundo artigo da parada',
     'https://picsum.photos/201',
     'Este é o segundo artigo do nosso blog.',
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas a ultrices leo. Vivamus in suscipit quam. Sed posuere erat non massa vehicula laoreet.'
 );
+
+-- Atividade
+-- 1) Insira pelo menos mais 2 artigos.
+
 INSERT INTO articles (
     art_author,
     art_title,
@@ -158,25 +173,21 @@ INSERT INTO articles (
     art_resume,
     art_content
 ) VALUES (
-    '3',
-    ' um artigo ai da parada',
-    'https://picsum.photos/204',
-    'Este é o um artigo do meu, do seu, do nosso blog.',
-    'Lorem ipsum dolor sit amet, . Maecenas a ultrices leo. Vivamus in suscipit quam. Sed posuere erat non massa vehicula laoreet.'
-),
-(
-    '4',
-    ' artigo sobre golfinhos',
-    'https://picsum.photos/205',
-    'Este é um artigo sobre os golfihos, do seu, do meu, do nosso blog.',
-    'Lorem ipsum dolor sit amet, . a ultrices leo. Vivamus in suscipit quam. Sed'
+    '1',
+    'Mais um artigo para o blog',
+    'https://picsum.photos/199',
+    'Resumo do artigo que va aparecer no blog',
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas a ultrices leo. Vivamus in suscipit quam. Sed posuere erat non massa vehicula laoreet.'
+), (
+    '1',
+    'Próximo artigo para do blog',
+    'https://picsum.photos/198',
+    'Esse é só mais um artigo fake',
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas a ultrices leo. Vivamus in suscipit quam. Sed posuere erat non massa vehicula laoreet.'
 );
-INSERT INTO comments(
-cmt_author ,
-    cmt_article ,
-    cmt_comment
-    ) VALUES(
-        '1',
-        '5',
-        'os golfinhos são lindos!!!'
-    )
+
+-- 2) Insira pelo menos 2 comentários de usuários diferentes para um mesmo artigo.
+
+INSERT INTO comments ( cmt_author, cmt_article, cmt_comment ) VALUES
+( '2', '2', 'Comentando um comentário comentado.'),
+( '3', '2', 'Comentártio da Hermenilda neste mesmo artigo.');

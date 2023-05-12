@@ -1,6 +1,7 @@
 $(document).ready(myPolicies)
-    
-    function myPolicies(){
-        changeTitle('políticas de privacidade')
-        console.log('oba! policies funciona')
-    }
+
+function myPolicies() {
+    changeTitle('Políticas de Privacidade')
+    $('.siteName').html(app.siteName)
+    $('.siteDomain').html(location.hostname)
+}
